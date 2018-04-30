@@ -185,7 +185,7 @@ function get_new_gif(query) {
 }
 
 function giphy(query) {
-  return fetch('http://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag='+query)
+  return fetch('https://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag='+query)
     .then(function(response) {
     if (response.status >= 200 && response.status < 400) {
       //console.log(response_json.data.image_url);
