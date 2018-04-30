@@ -4,8 +4,8 @@ as I don't do web dev, it could be anything. //
 
 ### GOATS
 
-any key: pop-up search
-
+almost any key: pop-up search
+backspace: delete gif under the pointer
 mouse click: place random gif from search results over here
 drag left click: rotate slowly clockwise
 
