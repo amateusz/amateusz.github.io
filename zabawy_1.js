@@ -105,6 +105,7 @@ function gif_intersects_with_mouse() {
       return i;
     }
   }
+  return false;
 }
 
 function mouseWheel(event) {
