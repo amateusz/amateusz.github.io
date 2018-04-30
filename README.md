@@ -5,7 +5,7 @@ as I don't do web dev, it could be anything. //
 
 any key: pop-up search
 
-mouse click: place reandom gif from search results here
+mouse click: place random gif from search results here
 drag left click: rotate slowly clockwise
 
 ## **_special!!_**:
