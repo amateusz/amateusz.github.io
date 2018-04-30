@@ -1,5 +1,5 @@
 as I don't do web dev, it could be anything. // 
-## [IT WORKS](amateusz.github.io) (fully on big computing devices only tbh)
+## [IT WORKS](http://amateusz.github.io) (fully on big computing devices only tbh)
 
 
 ### GOATS
@@ -13,3 +13,6 @@ drag left click: rotate slowly clockwise
 * plain scroll          ->  funny transform
 * CTRL + scroll         ->  zoom (scaling)
 * ALT (OPTION) + scroll ->  rotate. point direction with scrolling. I know, it's tricky
+
+
+_uses P5.js_
