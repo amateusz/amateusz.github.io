@@ -86,7 +86,7 @@ function keyPressed() {
       } else {
       }
     }
-  return false;
+  //return false;
 }
 
 function keyReleased() {
