@@ -14,7 +14,7 @@ function setup() {
 }
 
 function draw() {
-  background(0);
+  background("#A50365");
   for (var i = 0, len = gifs.length; i < len; i++) {
     if (gifs[i].loaded()) {
       // temporarily push away canvas origin
