@@ -108,12 +108,17 @@ function gif_intersects_with_mouse() {
 }
 
 function mouseWheel(event) {
+
   try {
     if (keyScalingPressed) {
       gifs[gif_intersects_with_mouse()].scaleX += map(event.deltaX, 110, -110, -1.0, 1.0);
       gifs[gif_intersects_with_mouse()].scaleY += map(event.deltaY, -110, 110, -1.0, 1.0);
     } else if (keyRotatingPressed) {
-      gifs[gif_intersects_with_mouse()].rotation += map(event.deltaY, -20, 20, -30, 30)
+      var vect = createVector(event.deltaX, event.deltaY);
+      console.log(vect.heading());
+
+      gifs[gif_intersects_with_mouse()].rotation = vect.heading() - 90;
+      //console.log(degrees(createVector(event.deltaX, event.deltaX).heading()));
     } else {
       var shearDeltaY = map(event.deltaY, 70, -70, -PI / 4, PI / 4);
       var shearDeltaX = map(event.deltaX, -70, 70, -PI / 4, PI / 4);
@@ -149,7 +154,11 @@ function mousePressed() {
 }
 
 function mouseDragged() {
-  gifs[gif_intersects_with_mouse()].rotation *= 1.2;
+  try {
+    gifs[gif_intersects_with_mouse()].rotation += 2;
+  }
+  catch(err) {
+  }
 }
 
 function mouseReleased() {
@@ -171,7 +180,7 @@ function get_new_gif(query) {
     new_gif.shearY = 0;
     new_gif.scaleX = 1.0;
     new_gif.scaleY = 1.0;
-    new_gif.rotation = 40;
+    new_gif.rotation = 0;
     gifs.push(new_gif);
   }
   );
