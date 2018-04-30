@@ -5,31 +5,31 @@ var query_input;
 var query_text = 'goats';
 var mouseDraggedFlag = false;
 var keyScalingPressed = false;
+var keyRotatingPressed = false;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   background(0);
-  //rectMode(CORNER);
   angleMode(DEGREES);
 }
 
 
 function draw() {
-  //background(0);
-  setup();
+  background(0);
   for (var i = 0, len = gifs.length; i < len; i++) {
     if (gifs[i].loaded()) {
+      // temporarily push away canvas origin
       push();
       translate(gifs[i].positionX + gifs[i].width/2, gifs[i].positionY +  gifs[i].height/2); 
-
+      // transformations
+      rotate(gifs[i].rotation);
       scale(gifs[i].scaleX, gifs[i].scaleY);
       shearX(gifs[i].shearX);
       shearY(gifs[i].shearY);
-      rotate(gifs[i].rotate);
+      // and blit
       image(gifs[i], -gifs[i].width/2, -gifs[i].height/2);      
-
+      // restore canvas origin
       pop();
-      //applyMatrix(1, 0, gifs[i].shearX, 1, 0, 0);
     }
   }
   //try {
@@ -67,6 +67,8 @@ function keyPressed() {
   } else
     if (keyCode === CONTROL) {
       keyScalingPressed = true;
+    } else if (keyCode === ALT || keyCode === OPTION) {
+      keyRotatingPressed = true;
     } else {
       if (! query_input) {
         console.log('created');
@@ -82,12 +84,17 @@ function keyPressed() {
       } else {
       }
     }
+  return false;
 }
 
 function keyReleased() {
   if (keyCode === CONTROL) {
     keyScalingPressed = false;
   }
+  if (keyCode === ALT || keyCode === OPTION) {
+    keyRotatingPressed = false;
+  }
+  return false;
 }
 
 function gif_intersects_with_mouse() {
@@ -105,6 +112,8 @@ function mouseWheel(event) {
     if (keyScalingPressed) {
       gifs[gif_intersects_with_mouse()].scaleX += map(event.deltaX, 110, -110, -1.0, 1.0);
       gifs[gif_intersects_with_mouse()].scaleY += map(event.deltaY, -110, 110, -1.0, 1.0);
+    } else if (keyRotatingPressed) {
+      gifs[gif_intersects_with_mouse()].rotation += map(event.deltaY, -20, 20, -30, 30)
     } else {
       var shearDeltaY = map(event.deltaY, 70, -70, -PI / 4, PI / 4);
       var shearDeltaX = map(event.deltaX, -70, 70, -PI / 4, PI / 4);
