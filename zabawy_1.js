@@ -6,15 +6,18 @@ var query_text = 'goats';
 var mouseDraggedFlag = false;
 var keyScalingPressed = false;
 var keyRotatingPressed = false;
+var bgColour;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  background(0);
+  colorMode(HSB, 360, 100, 100); // 300 - 331
+  bgColour = color(Math.random() * 31 + 300, 97, 64); // never the same colour (NTSC)
   angleMode(DEGREES);
 }
 
 function draw() {
-  background("#A50365");
+  background(bgColour);
+  //background("#A50365");
   for (var i = 0, len = gifs.length; i < len; i++) {
     if (gifs[i].loaded()) {
       // temporarily push away canvas origin
