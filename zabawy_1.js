@@ -2,76 +2,36 @@
 
 var gifs= new Array();
 var query_input;
-var query_text = 'cats';
+var query_text = 'goats';
+var mouseDraggedFlag = false;
+var keyScalingPressed = false;
 
 function setup() {
-  createCanvas(1000, 600);
+  createCanvas(windowWidth, windowHeight);
   background(0);
+  //rectMode(CORNER);
+  angleMode(DEGREES);
 }
 
-function hide_input() {
-  console.log('hide and query');
-  query_text = query_input.value();
-  get_new_gif(query_text);
-  //query_input.hide();
-  query_input.remove();
-  query_input = null;
-}
-
-function keyPressed() {
-  if (! query_input) {
-    console.log('created');
-    query_input = createInput(query_text);
-    query_input.size(200, 30);
-    query_input.show();
-    query_input.position(width/2 - query_input.width/2, height/3  - query_input.height/2);
-    query_input.changed(hide_input);
-  }
-
-  if (keyCode !== ENTER) {
-  } else
-    hide_input();
-    
-  //console.log(Object.getOwnPropertyNames(query_input.elt))
-  var methods = [];
-  for (var m in query_input) {
-    if (typeof query_input[m] == "property") {
-      methods.push(m);
-    }
-  }
-  console.log(methods.join("\n"));
-}
-
-//function show_input() {
-//  if (keyCode !== ENTER) {
-//    if (!query_input) {
-//      console.log(' input');
-//      query_input = createInput();
-//      query_input.position(mouseX, mouseY);
-//      query_input.input(show_input);
-//      query_input.changed(hide_input);
-//    }
-//    else
-//    console.log('not an input');
-//  }
-//}
-
-function myInputEvent() {
-  console.log('you are typing: ', this.value());
-}
-
-function mouseClicked() {
-  //gifs.push(giphy('computer'));
-  get_new_gif(query_text);
-}
 
 function draw() {
-  background(0);
+  //background(0);
+  setup();
   for (var i = 0, len = gifs.length; i < len; i++) {
-    image(gifs[i], gifs[i].positionX, gifs[i].positionY);
+    if (gifs[i].loaded()) {
+      push();
+      translate(gifs[i].positionX + gifs[i].width/2, gifs[i].positionY +  gifs[i].height/2); 
+
+      scale(gifs[i].scaleX, gifs[i].scaleY);
+      shearX(gifs[i].shearX);
+      shearY(gifs[i].shearY);
+      rotate(gifs[i].rotate);
+      image(gifs[i], -gifs[i].width/2, -gifs[i].height/2);      
+
+      pop();
+      //applyMatrix(1, 0, gifs[i].shearX, 1, 0, 0);
+    }
   }
-
-
   //try {
   //  if (gifs[0].loaded()) {
   //    console.log(gifs[0].frames());
@@ -83,29 +43,111 @@ function draw() {
   //}
 }
 
+function hide_input() {
+  console.log('hide and query');
+  query_text = query_input.value();
+  if (gifs.length === 0)
+    get_new_gif(query_text);
+  //query_input.hide();
+  query_input.remove();
+  query_input = null;
+}
 
-//function giphy(query) {
-//  //document.addEventListener('DOMContentLoaded', function () {
-//  //query = "computer"; // search query
-//  request = new XMLHttpRequest();
-//  request.open('GET', 'http://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag='+query, true);
-//  request.onload = function() {
-//    if (request.status >= 200 && request.status < 400) {
-//      data = JSON.parse(request.responseText).data.image_url;
-//      //data_small = JSON.parse(request.responseText).data.fixed_width_small_url;
-//      //console.log(data_small);
-//      //console.log(data);
-//      //document.getElementById("giphyme").innerHTML = '<center><img src = "'+data+'"  title="GIF via Giphy"></center>';
-//    } else {
-//      console.log('reached giphy, but API returned an error');
-//    }
-//  };
-//  request.onerror = function() {
-//    console.log('connection error');
-//  };
-//  request.send();
-//  //});
-//}
+function keyPressed() {
+  if (keyCode == BACKSPACE) {
+    if (!mouseDraggedFlag) {
+      // check for collision with gif. it should be method of FloatingGif object, but not for now..
+      //gifs.splice(gifs.length-1, 1);
+      try {
+        gifs.splice(gif_intersects_with_mouse(), 1);
+      }
+      catch (err) {
+      }
+    }
+  } else
+    if (keyCode === CONTROL) {
+      keyScalingPressed = true;
+    } else {
+      if (! query_input) {
+        console.log('created');
+        query_input = createInput(query_text);
+        query_input.size(200, 30);
+        query_input.show();
+        query_input.position(width/2 - query_input.width/2, height/3  - query_input.height/2);
+        query_input.changed(hide_input);
+      }
+
+      if (keyCode === ENTER) {
+        hide_input();
+      } else {
+      }
+    }
+}
+
+function keyReleased() {
+  if (keyCode === CONTROL) {
+    keyScalingPressed = false;
+  }
+}
+
+function gif_intersects_with_mouse() {
+  for (var i = gifs.length - 1; i >= 0; i--) {
+    // check for disjoin
+    if ((abs(mouseX - (gifs[i].positionX + gifs[i].width/2)) > gifs[i].width/2) || (abs(mouseY - (gifs[i].positionY + gifs[i].height/2)) > gifs[i].height/2)) {
+    } else {
+      return i;
+    }
+  }
+}
+
+function mouseWheel(event) {
+  try {
+    if (keyScalingPressed) {
+      gifs[gif_intersects_with_mouse()].scaleX += map(event.deltaX, 110, -110, -1.0, 1.0);
+      gifs[gif_intersects_with_mouse()].scaleY += map(event.deltaY, -110, 110, -1.0, 1.0);
+    } else {
+      var shearDeltaY = map(event.deltaY, 70, -70, -PI / 4, PI / 4);
+      var shearDeltaX = map(event.deltaX, -70, 70, -PI / 4, PI / 4);
+      gifs[gif_intersects_with_mouse()].shearX += shearDeltaX;
+      gifs[gif_intersects_with_mouse()].shearY += shearDeltaY;
+    }
+  }
+  catch (err) {
+  }
+  return false;
+}
+
+function myInputEvent() {
+  console.log('you are typing: ', this.value());
+}
+
+function mousePressed() {
+  if (!mouseDraggedFlag) {
+    if (mouseButton === LEFT) {
+      //gifs.push(giphy('computer'));
+      get_new_gif(query_text);
+    }
+
+
+    var methods = [];
+    for (var m in gifs[0]) {
+      if (typeof gifs[0][m] == "property") {
+        methods.push(m);
+      }
+    }
+    console.log(methods.join("\n"));
+  }
+}
+
+function mouseDragged() {
+  gifs[gif_intersects_with_mouse()].rotation *= 1.2;
+}
+
+function mouseReleased() {
+  mouseDraggedFlag = false;
+}
+
+
 
 function get_new_gif(query) {
   giphy(query).then( function(url) {
@@ -116,6 +158,11 @@ function get_new_gif(query) {
 
     new_gif.positionX = mouseX-new_gif.width/2;
     new_gif.positionY = mouseY-new_gif.height/2;
+    new_gif.shearX = 0;
+    new_gif.shearY = 0;
+    new_gif.scaleX = 1.0;
+    new_gif.scaleY = 1.0;
+    new_gif.rotation = 40;
     gifs.push(new_gif);
   }
   );
