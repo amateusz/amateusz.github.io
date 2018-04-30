@@ -13,7 +13,6 @@ function setup() {
   angleMode(DEGREES);
 }
 
-
 function draw() {
   background(0);
   for (var i = 0, len = gifs.length; i < len; i++) {
@@ -44,7 +43,7 @@ function draw() {
 }
 
 function hide_input() {
-  console.log('hide and query');
+  console.log('hide text input and perform query');
   query_text = query_input.value();
   if (gifs.length === 0)
     get_new_gif(query_text);
@@ -71,7 +70,7 @@ function keyPressed() {
       keyRotatingPressed = true;
     } else {
       if (! query_input) {
-        console.log('created');
+        console.log('created text input');
         query_input = createInput(query_text);
         query_input.size(200, 30);
         query_input.show();
@@ -116,8 +115,6 @@ function mouseWheel(event) {
       gifs[gif_intersects_with_mouse()].scaleY += map(event.deltaY, -110, 110, -1.0, 1.0);
     } else if (keyRotatingPressed) {
       var vect = createVector(event.deltaX, event.deltaY);
-      console.log(vect.heading());
-
       gifs[gif_intersects_with_mouse()].rotation = vect.heading() - 90;
       //console.log(degrees(createVector(event.deltaX, event.deltaX).heading()));
     } else {
