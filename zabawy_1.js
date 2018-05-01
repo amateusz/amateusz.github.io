@@ -31,7 +31,7 @@ function draw() {
       // and blit
       if (gifs[i].loaded()) {
         image(gifs[i], -gifs[i].width/2, -gifs[i].height/2); // actual gif
-      else{
+      }else{
         image(gifs[i].preview, -gifs[i].preview.width/2, -gifs[i].preview.height/2); // if not ready, then only a mere preview
       }  
       // restore canvas origin
