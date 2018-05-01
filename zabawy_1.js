@@ -56,7 +56,7 @@ function hide_input() {
 }
 
 function keyPressed() {
-  if (keyCode == BACKSPACE) {
+  if (keyCode == BACKSPACE && !query_input) {
     if (!mouseDraggedFlag) {
       // check for collision with gif. it should be method of FloatingGif object, but not for now..
       //gifs.splice(gifs.length-1, 1);
@@ -170,10 +170,13 @@ function mouseReleased() {
 
 function get_new_gif(query) {
   giphy(query).then( function(url) {
-    //var new_gif = loadGif(url.data.image_url);
-    var new_gif = loadGif(url.data.fixed_width_downsampled_url);
-    new_gif.width = url.data.fixed_width_downsampled_width;
-    new_gif.height = url.data.fixed_width_downsampled_height;
+    var new_gif = loadGif(url.data.image_url);
+    new_gif.width = url.data.image_width;
+    new_gif.height = url.data.image_height;
+
+    //var new_gif = loadGif(url.data.fixed_width_downsampled_url);
+    //new_gif.width = url.data.fixed_width_downsampled_width;
+    //new_gif.height = url.data.fixed_width_downsampled_height;
 
     new_gif.positionX = mouseX-new_gif.width/2;
     new_gif.positionY = mouseY-new_gif.height/2;
