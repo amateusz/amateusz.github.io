@@ -81,7 +81,7 @@ function keyPressed() {
         query_input.show();
         query_input.position(width/2 - query_input.width/2, height/3  - query_input.height/2);
         query_input.changed(hide_input);
-        document.getElementById(this.getAttribute('id')).focus();
+        //document.getElementById(this.getAttribute('id')).focus();
       }
 
       if (keyCode === ENTER) {
@@ -107,7 +107,7 @@ function gif_intersects_with_mouse(reverse) {
   if (!reverse) {
     for (var i = 0; i < gifs.length; i++) {
       // check for disjoin
-      if ((abs(mouseX - (gifs[i].positionX + gifs[i].width/2)) > gifs[i].width/2) || (abs(mouseY - (gifs[i].positionY + gifs[i].height/2)) > gifs[i].height/2)) {
+      if ((abs(mouseX - gifs[i].positionX) > gifs[i].width/2) || (abs(mouseY - gifs[i].positionY) > gifs[i].height/2)) {
       } else {
         return i;
       }
@@ -115,12 +115,13 @@ function gif_intersects_with_mouse(reverse) {
   } else {
     for (var i = gifs.length - 1; i >= 0; i--) {
       // check for disjoin
-      if ((abs(mouseX - (gifs[i].positionX + gifs[i].width/2)) > gifs[i].width/2) || (abs(mouseY - (gifs[i].positionY + gifs[i].height/2)) > gifs[i].height/2)) {
+      if ((abs(mouseX - gifs[i].positionX) > gifs[i].width/2) || (abs(mouseY - gifs[i].positionY) > gifs[i].height/2)) {
       } else {
         return i;
       }
     }
   }
+  throw error; // something
   return false;
 }
 
@@ -202,7 +203,7 @@ function get_new_gif(query) {
       //     new_gif.preview.width = url.data.images["480w_still"].width;
       //     new_gif.preview.height = url.data.images["480w_still"].height;
 
-      new_gif.positionX = mouseX; //-new_gif.width/2;
+    new_gif.positionX = mouseX; //-new_gif.width/2; // centre
     new_gif.positionY = mouseY; //-new_gif.height/2;
     new_gif.shearX = 0;
     new_gif.shearY = 0;
