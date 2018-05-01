@@ -187,8 +187,7 @@ function get_new_gif(query) {
                                 );
 //     new_gif.preview.width = url.data.images["480w_still"].width;
 //     new_gif.preview.height = url.data.images["480w_still"].height;
-    
-    new_gif. = url.data.images["480w_still"].width
+   
     new_gif.positionX = mouseX; //-new_gif.width/2;
     new_gif.positionY = mouseY; //-new_gif.height/2;
     new_gif.shearX = 0;
