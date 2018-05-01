@@ -187,7 +187,7 @@ function get_new_gif(query) {
 //                                 .split('/giphy.gif')[0] 
 //                                 );
     
-    new_gif.preview = loadImage(url.data.images.downsized_still)
+    new_gif.preview = loadImage(url.data.images.downsized_still.url)
 //     new_gif.preview.width = url.data.images["480w_still"].width;
 //     new_gif.preview.height = url.data.images["480w_still"].height;
    
