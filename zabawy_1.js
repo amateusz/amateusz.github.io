@@ -181,9 +181,11 @@ function get_new_gif(query) {
     new_gif.width = url.data.fixed_width_downsampled_width;
     new_gif.height = url.data.fixed_width_downsampled_height;
     
-    var pat = url.data.images.fixed_height_small_still.url.split('/')[0];    
-    new_gif.preview = loadImage(url.data.image_url.replace(pat, url.data.images.fixed_height_small_still.url).split('/giphy.gif')[0] ) );
-    
+    var pat = url.data.id; // id only, no filename // images.fixed_height_small_still.url.split('/')[0]
+    new_gif.preview = loadImage(url.data.image_url
+                                .replace(pat, url.data.images.fixed_height_small_still.url)
+                                .split('/giphy.gif')[0] 
+                                );
     new_gif.positionX = mouseX-new_gif.width/2;
     new_gif.positionY = mouseY-new_gif.height/2;
     new_gif.shearX = 0;
