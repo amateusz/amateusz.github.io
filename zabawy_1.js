@@ -19,7 +19,6 @@ function draw() {
   background(bgColour);
   //background("#A50365");
   for (var i = 0, len = gifs.length; i < len; i++) {
-    
       // temporarily push away canvas origin
       push();
       translate(gifs[i].positionX, gifs[i].positionY); 
@@ -36,7 +35,6 @@ function draw() {
       }  
       // restore canvas origin
       pop();
-    }
   }
   //try {
   //  if (gifs[0].loaded()) {
