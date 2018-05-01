@@ -33,6 +33,9 @@ function draw() {
       // restore canvas origin
       pop();
     }
+    else{
+       image(gifs[i].preview, -gifs[i].width/2, -gifs[i].height/2);
+    }
   }
   //try {
   //  if (gifs[0].loaded()) {
@@ -177,7 +180,8 @@ function get_new_gif(query) {
     var new_gif = loadGif(url.data.fixed_width_downsampled_url);
     new_gif.width = url.data.fixed_width_downsampled_width;
     new_gif.height = url.data.fixed_width_downsampled_height;
-
+    
+    new_gif.preview = loadImage(url.data.images.fixed_height_small_still.url)
     new_gif.positionX = mouseX-new_gif.width/2;
     new_gif.positionY = mouseY-new_gif.height/2;
     new_gif.shearX = 0;
