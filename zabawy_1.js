@@ -81,7 +81,7 @@ function keyPressed() {
         query_input.show();
         query_input.position(width/2 - query_input.width/2, height/3  - query_input.height/2);
         query_input.changed(hide_input);
-        document.getElementById(query_input.getAttribute('id')).focus();
+        document.getElementById(this.getAttribute('id')).focus();
       }
 
       if (keyCode === ENTER) {
