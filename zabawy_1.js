@@ -173,13 +173,13 @@ function mouseReleased() {
 
 function get_new_gif(query) {
   giphy(query).then( function(url) {
-    //var new_gif = loadGif(url.data.image_url);
-    //new_gif.width = url.data.image_width;
-    //new_gif.height = url.data.image_height;
+    var new_gif = loadGif(url.data.image_url);
+    new_gif.width = url.data.image_width;
+    new_gif.height = url.data.image_height;
 
-    var new_gif = loadGif(url.data.fixed_width_downsampled_url);
-    new_gif.width = url.data.fixed_width_downsampled_width;
-    new_gif.height = url.data.fixed_width_downsampled_height;
+    //var new_gif = loadGif(url.data.fixed_width_downsampled_url);
+    //new_gif.width = url.data.fixed_width_downsampled_width;
+    //new_gif.height = url.data.fixed_width_downsampled_height;
     
     var pat = url.data.id; // id only, no filename // images.fixed_height_small_still.url.split('/')[0]
 //     new_gif.preview = loadImage(url.data.image_url
