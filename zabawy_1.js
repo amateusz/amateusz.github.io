@@ -81,6 +81,7 @@ function keyPressed() {
         query_input.show();
         query_input.position(width/2 - query_input.width/2, height/3  - query_input.height/2);
         query_input.changed(hide_input);
+        document.getElementById(query_input.getAttribute('id')).focus();
       }
 
       if (keyCode === ENTER) {
@@ -181,10 +182,12 @@ function get_new_gif(query) {
     new_gif.height = url.data.fixed_width_downsampled_height;
     
     var pat = url.data.id; // id only, no filename // images.fixed_height_small_still.url.split('/')[0]
-    new_gif.preview = loadImage(url.data.image_url
-                                .replace(pat, url.data.images.fixed_height_small_still.url)
-                                .split('/giphy.gif')[0] 
-                                );
+//     new_gif.preview = loadImage(url.data.image_url
+//                                 .replace(pat, url.data.images.fixed_height_small_still.url)
+//                                 .split('/giphy.gif')[0] 
+//                                 );
+    
+    new_gif.preview = loadImage(url.data.images.downsized_still)
 //     new_gif.preview.width = url.data.images["480w_still"].width;
 //     new_gif.preview.height = url.data.images["480w_still"].height;
    
