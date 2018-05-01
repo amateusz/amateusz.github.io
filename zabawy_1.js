@@ -19,7 +19,7 @@ function draw() {
   background(bgColour);
   //background("#A50365");
   for (var i = 0, len = gifs.length; i < len; i++) {
-    if (gifs[i].loaded()) {
+    
       // temporarily push away canvas origin
       push();
       translate(gifs[i].positionX + gifs[i].width/2, gifs[i].positionY +  gifs[i].height/2); 
@@ -29,12 +29,13 @@ function draw() {
       shearX(gifs[i].shearX);
       shearY(gifs[i].shearY);
       // and blit
-      image(gifs[i], -gifs[i].width/2, -gifs[i].height/2);      
+      if (gifs[i].loaded()) {
+        image(gifs[i], -gifs[i].width/2, -gifs[i].height/2); // actual gif
+      else{
+        image(gifs[i].preview.image, -gifs[i].preview.width/2, -gifs[i].preview.height/2); // if not ready, then only a mere preview
+      }  
       // restore canvas origin
       pop();
-    }
-    else{
-       image(gifs[i].preview, -gifs[i].width/2, -gifs[i].height/2);
     }
   }
   //try {
@@ -182,10 +183,14 @@ function get_new_gif(query) {
     new_gif.height = url.data.fixed_width_downsampled_height;
     
     var pat = url.data.id; // id only, no filename // images.fixed_height_small_still.url.split('/')[0]
-    new_gif.preview = loadImage(url.data.image_url
+    new_gif.preview.image = loadImage(url.data.image_url
                                 .replace(pat, url.data.images.fixed_height_small_still.url)
                                 .split('/giphy.gif')[0] 
                                 );
+    new_gif.preview.width = url.data.images["480w_still"].width;
+    new_gif.preview.height = url.data.images["480w_still"].height;
+    
+    new_gif. = url.data.images["480w_still"].width
     new_gif.positionX = mouseX-new_gif.width/2;
     new_gif.positionY = mouseY-new_gif.height/2;
     new_gif.shearX = 0;
