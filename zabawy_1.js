@@ -4,15 +4,26 @@ var gifs= new Array();
 var query_input;
 var query_text = 'goats';
 var mouseDraggedFlag = false;
+var mouseDraggedOffset = {x:0, y:0};
+var mouseCursorCurrentSize = 15;
+var mouseCursorAnimationEasing = 0.15;
 var keyScalingPressed = false;
 var keyRotatingPressed = false;
 var bgColour;
+
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   colorMode(HSB, 360, 100, 100); // 300 - 331
   bgColour = color(Math.random() * 31 + 300, 97, 64); // never the same colour (NTSC)
   angleMode(DEGREES);
+
+   noCursor();
+   stroke(309,40,100);
+
+   create_input();
+   show_input();
+
 }
 
 function draw() {
@@ -28,14 +39,49 @@ function draw() {
     shearX(gifs[i].shearX);
     shearY(gifs[i].shearY);
     // and blit
-    if (gifs[i].loaded()) {
-      image(gifs[i], -gifs[i].width/2, -gifs[i].height/2); // actual gif
-    } else {
-      image(gifs[i].preview, -gifs[i].preview.width/2, -gifs[i].preview.height/2); // if not ready, then only a mere preview
-    }  
+
+    // console.debug("gif #" + i + ": " + gifs[i].loaded());
+    // if (gifs[i].loaded()) {
+    //   image(gifs[i], -gifs[i].width/2, -gifs[i].height/2); // actual gif
+    // } else {
+    //   image(gifs[i].preview, -gifs[i].preview.width/2, -gifs[i].preview.height/2); // if not ready, then only a mere preview
+    // } 
+    if (gifs[i].elt.complete){
+    	// image(gifs[i], -gifs[i].width/2, -gifs[i].height/2); // actual gif
+    	gifs[i].position(gifs[i].positionX - gifs[i].width/2, gifs[i].positionY - gifs[i].height/2); // actual gif
+    }
+    else {
+      try{
+        // push();
+    	 image(gifs[i].preview, -gifs[i].preview.width/2, -gifs[i].preview.height/2); // if not ready, then only a mere preview
+       // scale(gifs[i].preview.scale);
+       console.log(gifs[i].preview.scale);
+       // pop();
+      }
+      catch (TypeError){}
+  	}
     // restore canvas origin
     pop();
   }
+
+  try{
+  	gif_intersects_with_mouse();
+	  stroke(309,40,100);
+  	strokeWeight(5);
+  	noFill();
+    // rect(mouseX-25, mouseY-25, 50, 50);
+    mouseCursorCurrentSize += (15 - mouseCursorCurrentSize) * mouseCursorAnimationEasing
+    line(mouseX - mouseCursorCurrentSize, mouseY - mouseCursorCurrentSize, mouseX + mouseCursorCurrentSize, mouseY + mouseCursorCurrentSize);
+    line(mouseX - mouseCursorCurrentSize, mouseY + mouseCursorCurrentSize, mouseX + mouseCursorCurrentSize, mouseY - mouseCursorCurrentSize);
+  }
+  catch {
+  	// draw non-selection curor
+  	strokeWeight(12);
+  	mouseCursorCurrentSize += (0 - mouseCursorCurrentSize) * mouseCursorAnimationEasing
+  	line(mouseX - mouseCursorCurrentSize, mouseY - mouseCursorCurrentSize, mouseX + mouseCursorCurrentSize, mouseY + mouseCursorCurrentSize);
+    line(mouseX - mouseCursorCurrentSize, mouseY + mouseCursorCurrentSize, mouseX + mouseCursorCurrentSize, mouseY - mouseCursorCurrentSize);
+  }
+
   //try {
   //  if (gifs[0].loaded()) {
   //    console.log(gifs[0].frames());
@@ -48,17 +94,29 @@ function draw() {
 }
 
 function hide_input() {
-  console.log('hide text input and perform query');
-  query_text = query_input.value();
-  if (gifs.length === 0)
-    get_new_gif(query_text);
-  //query_input.hide();
-  query_input.remove();
-  query_input = null;
+  console.log('hide text input');
+  query_input.elt.hidden = true;
+  // query_input.remove();
+  // query_input = null;
+}
+
+function create_input(){
+	query_input = createInput(query_text);
+	query_input.size(200, 30);       
+    query_input.position(width/2 - query_input.width/2, height/3  - query_input.height/2);
+    query_input.changed(hide_input); // attach callback
+    query_input.elt.autofocus = true;
+    query_input.onclick = function(){query_input.focus()};
+}
+
+function show_input(){
+	console.log('created text input');
+    query_input.elt.hidden = false;
+    query_input.elt.select = true;
 }
 
 function keyPressed() {
-  if (keyCode == BACKSPACE && !query_input) {
+  if (keyCode == BACKSPACE && query_input.elt.hidden) {
     if (!mouseDraggedFlag) {
       // check for collision with gif. it should be method of FloatingGif object, but not for now..
       //gifs.splice(gifs.length-1, 1);
@@ -74,17 +132,19 @@ function keyPressed() {
     } else if (keyCode === ALT || keyCode === OPTION) {
       keyRotatingPressed = true;
     } else {
-      if (! query_input) {
-        console.log('created text input');
-        query_input = createInput(query_text);
-        query_input.size(200, 30);
-        query_input.show();
-        query_input.position(width/2 - query_input.width/2, height/3  - query_input.height/2);
-        query_input.changed(hide_input);
+      if (query_input.elt.hidden) {
+        show_input();
         //document.getElementById(this.getAttribute('id')).focus();
+      }
+      else if (keyCode === ESCAPE){
+      	hide_input();
       }
 
       if (keyCode === ENTER) {
+      	// dragging_gif = true;
+      	query_text = query_input.value();
+		// if (gifs.length === 0)
+		get_new_gif(query_text);
         hide_input();
       } else {
       }
@@ -98,6 +158,9 @@ function keyReleased() {
   }
   if (keyCode === ALT || keyCode === OPTION) {
     keyRotatingPressed = false;
+  }
+  else{
+  	query_input.elt.focus();
   }
   return false;
 }
@@ -122,7 +185,8 @@ function gif_intersects_with_mouse(reverse) {
     }
   }
   throw error; // something
-  return false;
+  throw "not intersecting";
+  // return false;
 }
 
 function mouseWheel(event) {
@@ -152,11 +216,20 @@ function myInputEvent() {
 }
 
 function mousePressed() {
+  // check for collisions
+  try {
+  	intersecting = gif_intersects_with_mouse(true);
+  	mouseDraggedFlag = true;
+  	mouseDraggedOffset = {x: mouseX - gifs[intersecting].positionX, y: mouseY - gifs[intersecting].positionY};
+  	mouseCursorCurrentSize = 15;
+  }
+  catch (err) {}
+
   if (!mouseDraggedFlag) {
-    if (mouseButton === LEFT) {
+    // if (mouseButton === LEFT) {
       //gifs.push(giphy('computer'));
-      get_new_gif(query_text);
-    }
+      // get_new_gif(query_text);
+    // }
 
 
     var methods = [];
@@ -170,22 +243,38 @@ function mousePressed() {
 }
 
 function mouseDragged() {
-  try {
-    gifs[gif_intersects_with_mouse()].rotation += 2;
+  if (mouseDraggedFlag){
+  	try {      
+		gifs[intersecting].positionX = mouseX - mouseDraggedOffset.x ;
+		gifs[intersecting].positionY = mouseY - mouseDraggedOffset.y; // actual gif
+
+    }
+    catch{}
   }
-  catch(err) {
-  }
+  //   gifs[gif_intersects_with_mouse()].rotation += 2;
+  // }
+  // catch(err) {
+  // }
+ 
 }
 
 function mouseReleased() {
   mouseDraggedFlag = false;
+  mouseCursorCurrentSize = 0;
 }
 
 
 
 function get_new_gif(query) {
   giphy(query).then( function(url) {
-    var new_gif = loadGif(url.data.image_url);
+    // var new_gif = loadGif(url.data.image_url);
+    var new_gif = createImg(url.data.image_url);
+    
+    new_gif.loaded = false;
+    new_gif.elt.onload = function (){console.log("LOADED2")}; // 
+    new_gif.elt.addEventListener("load", console.log("LOADED")); // strangely enough. these 2 trigger differently. one at the begginig of loading, the other one at the actual end
+
+    // new_gif.draggable = false;
     new_gif.width = url.data.image_width;
     new_gif.height = url.data.image_height;
 
@@ -199,7 +288,6 @@ function get_new_gif(query) {
     //                                 .split('/giphy.gif')[0] 
     //                                 );
 
-    new_gif.preview = loadImage(url.data.images.downsized_still.url)
       //     new_gif.preview.width = url.data.images["480w_still"].width;
       //     new_gif.preview.height = url.data.images["480w_still"].height;
 
@@ -210,12 +298,18 @@ function get_new_gif(query) {
     new_gif.scaleX = 1.0;
     new_gif.scaleY = 1.0;
     new_gif.rotation = 0;
+
+    new_gif.preview = loadImage(url.data.images.downsized_still.url);
+    new_gif.preview.scale = new_gif.width / url.data.images.downsized_still.width;
+
+    
     gifs.push(new_gif);
   }
   );
 }
 
 function giphy(query) {
+  console.debug('fetching: ' + 'https://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag='+query);
   return fetch('https://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag='+query)
     .then(function(response) {
     if (response.status >= 200 && response.status < 400) {
